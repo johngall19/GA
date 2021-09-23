@@ -8,10 +8,12 @@ import reporting
 from solution import Solution
 from itertools import permutations
 import math
+import statistics
+import numpy as np
 
 
-POPULATION_SIZE = 10
-MAX_GENERATIONS = 10
+POPULATION_SIZE = 50
+MAX_GENERATIONS = 50
 NUMBER_OUTPUT_LINKS = 15
 
 if NUMBER_OUTPUT_LINKS > MAX_GENERATIONS:
@@ -85,16 +87,17 @@ def create_population(size, locations):
 
 def ga(distance_matix, locations):
     logging.basicConfig(level=logging.INFO)
-    fittest_all_time = 999999999
-    fittest_solution_all_time = None
+    fittest_solution_all_time = Solution(locations)
+    fittest_solution_all_time.fitness_score = calc_fitness_score(
+        distance_matix, fittest_solution_all_time.route
+    )
     fittest_solution_per_generation = []
+
+    with open("results/generation_results.csv", "w") as results:
+        results.write("Generation, Average Distance, Standard Deviation\n")
 
     population = create_population(POPULATION_SIZE, locations)
     logging.info(f" Population size: {len(population)}")
-
-    # Print initial population
-    # for solution in population:
-    #     logging.debug(f" Solution: {solution.calc_fitness_score()}")
 
     for generation_number in range(MAX_GENERATIONS):
         #  Calculate the fitness of each solution
@@ -105,27 +108,38 @@ def ga(distance_matix, locations):
         current_fittest = min(population, key=lambda c: c.fitness_score)
         fittest_solution_per_generation.append(current_fittest)
 
-        if current_fittest.fitness_score < fittest_all_time:
+        if current_fittest.fitness_score < fittest_solution_all_time.fitness_score:
             fittest_solution_all_time = copy.deepcopy(current_fittest)
-            fittest_all_time = current_fittest.fitness_score  # jgg is this neeeded
 
-        next_generation = []
-        for _ in range(POPULATION_SIZE // 2):
-            parent1, parent2 = select_parents(population)
-            child1, child2 = breed(parent1, parent2)
-            next_generation.append(child1)
-            next_generation.append(child2)
+        population = create_next_generation(population)
 
-        population = next_generation
+        output_generation_results(generation_number, population)
 
-        logging.info(
-            f" Generation number>>>>>>>>>>>>>>>>>>>>>>>>>: {generation_number}"
-        )
-
-    output_results(fittest_solution_all_time, fittest_solution_per_generation)
+    output_final_results(fittest_solution_all_time, fittest_solution_per_generation)
 
 
-def output_results(solution, solutions):
+def output_generation_results(generation_number, population):
+    fitness_scores = (x.fitness_score for x in population)
+    fitness_array = np.array(list(fitness_scores))
+    mean_score = np.mean(fitness_array)
+    std_score = np.std(fitness_array)
+
+    print(f"Generation {generation_number}, mean distance, {mean_score}")
+    with open("results/generation_results.csv", "a") as results:
+        results.write(f"{generation_number}, {mean_score}, {std_score}\n")
+
+
+def create_next_generation(population):
+    next_generation = []
+    for _ in range(POPULATION_SIZE // 2):
+        parent1, parent2 = select_parents(population)
+        child1, child2 = breed(parent1, parent2)
+        next_generation.append(child1)
+        next_generation.append(child2)
+    return next_generation
+
+
+def output_final_results(solution, solutions):
     # [0, 7, 8, 6, 5, 4, 9, 3, 1, 2, 0]
 
     print(f"Overall shortest route found: {solution.route} : {solution.fitness_score}")
@@ -144,9 +158,9 @@ def output_results(solution, solutions):
     # Add to solutions to display it for convenience
     optimum_solution = Solution([0, 7, 8, 6, 5, 4, 9, 3, 1, 2, 0])
     optimum_solution.route = [0, 7, 8, 6, 5, 4, 9, 3, 1, 2, 0]
-    solutions.append(optimum_solution)
+    solutions.insert(0, optimum_solution)
 
-    reporting.generate_report(solutions)
+    reporting.generate_report(solutions[::OUTPUT_GENERATION_STEP])
 
 
 def calc_fitness_score(distance_matix, route):
@@ -179,7 +193,7 @@ def brute_force(distances, locations):
 
 
 # Kick off the GA...
-number_locations = 6
+number_locations = 10
 distances = Distances.load_matrix(number_locations)
 locations = list(Locations.locations)[:number_locations]
 ga(distances, locations)
