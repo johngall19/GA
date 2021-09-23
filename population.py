@@ -12,9 +12,10 @@ import statistics
 import numpy as np
 
 
-POPULATION_SIZE = 50
-MAX_GENERATIONS = 50
+POPULATION_SIZE = 25
+MAX_GENERATIONS = 100
 NUMBER_OUTPUT_LINKS = 15
+ELITISM_PERCENT = 5
 
 if NUMBER_OUTPUT_LINKS > MAX_GENERATIONS:
     OUTPUT_GENERATION_STEP = 1
@@ -94,7 +95,9 @@ def ga(distance_matix, locations):
     fittest_solution_per_generation = []
 
     with open("results/generation_results.csv", "w") as results:
-        results.write("Generation, Average Distance, Standard Deviation\n")
+        results.write(
+            "Generation, Average Distance, Standard Deviation, Longest, Shortest\n"
+        )
 
     population = create_population(POPULATION_SIZE, locations)
     logging.info(f" Population size: {len(population)}")
@@ -123,19 +126,33 @@ def output_generation_results(generation_number, population):
     fitness_array = np.array(list(fitness_scores))
     mean_score = np.mean(fitness_array)
     std_score = np.std(fitness_array)
+    longest = fitness_array.max()
+    shortest = fitness_array.min()
 
     print(f"Generation {generation_number}, mean distance, {mean_score}")
     with open("results/generation_results.csv", "a") as results:
-        results.write(f"{generation_number}, {mean_score}, {std_score}\n")
+        results.write(
+            f"{generation_number}, {mean_score}, {std_score}, {longest}, {shortest}\n"
+        )
 
 
 def create_next_generation(population):
-    next_generation = []
-    for _ in range(POPULATION_SIZE // 2):
+    next_generation = get_elites(population)
+
+    remaining_number = POPULATION_SIZE - len(next_generation)
+    for _ in range(remaining_number // 2):
         parent1, parent2 = select_parents(population)
         child1, child2 = breed(parent1, parent2)
         next_generation.append(child1)
         next_generation.append(child2)
+    return next_generation
+
+
+def get_elites(population):
+    # Keep this as an even number, makes pairing up for breeding easier
+    number = (int(ELITISM_PERCENT / 100 * POPULATION_SIZE) // 2) * 2
+    population.sort(key=lambda x: x.fitness_score)
+    next_generation = population[:number]
     return next_generation
 
 
