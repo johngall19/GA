@@ -2,25 +2,6 @@ import numpy as np
 
 
 class Locations:
-    # locations = {
-    #     0: "Concord, NH",
-    #     1: "Hartford, CT",
-    #     2: "Boston, MA",
-    #     3: "Providence, RI",
-    #     4: "Augusta, ME",
-    #     5: "Montpelier, VT",
-    # }
-
-    # distances = np.array(
-    #     [
-    #         [0, 240, 114, 178, 226, 186],
-    #         [240, 0, 164, 121, 415, 322],
-    #         [114, 164, 0, 81, 259, 290],
-    #         [178, 121, 81, 0, 340, 342],
-    #         [226, 415, 259, 340, 0, 290],
-    #         [186, 322, 290, 342, 290, 0],
-    #     ]
-    # )
     locations = {
         0: "Montgomery, AL",
         1: "Phoenix, AZ",
@@ -32,19 +13,42 @@ class Locations:
         7: "Tallahassee, FL",
         8: "Atlanta, GA",
         9: "Boise, ID",
+        10: "Springfield, IL",
+        11: "Indianapolis, IN",
+        12: "Des Moines, IA",
+        13: "Topeka, KS",
+        14: "Frankfort, KY",
+        15: "Baton Rouge, LA",
+        16: "Augusta, ME",
+        17: "Annapolis, MD",
+        18: "Boston, MA",
+        19: "Lansing, MI",
+        20: "St. Paul, MN",
+        21: "Jackson, MS",
+        22: "Jefferson City, MO",
+        23: "Helena, MT",
+        24: "Lincoln, NE",
+        25: "Carson City, NV",
+        26: "Concord, NH",
+        27: "Trenton, NJ",
+        28: "Santa Fe, NM",
+        29: "Albany, NY",
+        30: "Raleigh, NC",
+        31: "Bismarck, ND",
+        32: "Columbus, OH",
+        33: "Oklahoma City, OK",
+        34: "Salem, OR",
+        35: "Harrisburg, PA",
+        36: "Providence, RI",
+        37: "Columbia, SC",
+        38: "Pierre, SD",
+        39: "Nashville, TN",
+        40: "Austin, TX",
+        41: "Salt Lake City, UT",
+        42: "Montpelier, VT",
+        43: "Richmond, VA",
+        44: "Olympia, WA",
+        45: "Charleston, WV",
+        46: "Madison, WI",
+        47: "Cheyenne, WY",
     }
-
-    distances = np.array(
-        [
-            [0, 1712, 463, 2424, 1420, 1171, 893, 209, 160, 2241],
-            [1796, 0, 1343, 754, 821, 2585, 2414, 1885, 1853, 1043],
-            [462, 1345, 0, 1971, 966, 1353, 1106, 669, 518, 1788],
-            [2423, 755, 1970, 0, 1182, 2924, 2812, 2630, 2521, 714],
-            [1419, 821, 966, 1179, 0, 1880, 1749, 1626, 1402, 831],
-            [1168, 2585, 1351, 2920, 1880, 0, 283, 1217, 1001, 2572],
-            [891, 2415, 1104, 2810, 1751, 280, 0, 965, 732, 2462],
-            [207, 1886, 670, 2631, 1627, 1210, 967, 0, 268, 2449],
-            [160, 1854, 519, 2522, 1405, 1004, 734, 268, 0, 2174],
-            [2240, 1044, 1788, 713, 830, 2572, 2460, 2448, 2169, 0],
-        ]
-    )

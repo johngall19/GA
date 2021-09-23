@@ -2,6 +2,7 @@ import copy
 import logging
 import random
 from locations import Locations
+from distances import Distances
 import reporting
 
 from solution import Solution
@@ -74,21 +75,21 @@ def select_parents(population):
     return candidate1, candidate2
 
 
-def create_population(size):
+def create_population(size, locations):
     population = []
     for x in range(size):
-        population.append(Solution())
+        population.append(Solution(locations))
 
     return population
 
 
-def ga():
+def ga(distance_matix, locations):
     logging.basicConfig(level=logging.INFO)
     fittest_all_time = 999999999
     fittest_solution_all_time = None
     fittest_solution_per_generation = []
 
-    population = create_population(POPULATION_SIZE)
+    population = create_population(POPULATION_SIZE, locations)
     logging.info(f" Population size: {len(population)}")
 
     # Print initial population
@@ -98,7 +99,7 @@ def ga():
     for generation_number in range(MAX_GENERATIONS):
         #  Calculate the fitness of each solution
         for solution in population:
-            solution.fitness_score = calc_fitness_score(solution.route)
+            solution.fitness_score = calc_fitness_score(distance_matix, solution.route)
             logging.debug(f" Solution: {solution.fitness_score}")
 
         current_fittest = min(population, key=lambda c: c.fitness_score)
@@ -141,35 +142,35 @@ def output_results(solution, solutions):
     # For testing. This is the optimum route for 10 locations
     # [0, 7, 8, 6, 5, 4, 9, 3, 1, 2, 0]
     # Add to solutions to display it for convenience
-    optimum_solution = Solution()
+    optimum_solution = Solution([0, 7, 8, 6, 5, 4, 9, 3, 1, 2, 0])
     optimum_solution.route = [0, 7, 8, 6, 5, 4, 9, 3, 1, 2, 0]
     solutions.append(optimum_solution)
 
     reporting.generate_report(solutions)
 
 
-def calc_fitness_score(route):
+def calc_fitness_score(distance_matix, route):
     total_distance = 0
 
     for i in range(len(route) - 1):
-        total_distance += Locations.distances[route[i], route[i + 1]]
+        total_distance += distance_matix[route[i], route[i + 1]]
 
     return total_distance
 
 
-def brute_force():
+def brute_force(distances, locations):
     min_distance = 999999999
 
-    next_perm = permutations(list(Locations.locations)[1:])
+    next_perm = permutations(list(locations)[1:])
 
-    print(f"Num permutations: {math.factorial(len(Locations.locations) - 1)}")
+    print(f"Num permutations: {math.factorial(len(locations) - 1)}")
 
     for current_route in next_perm:
         full_route = [0] + list(current_route) + [0]
 
         # print(f"Permutation: {full_route}")
 
-        current_distance = calc_fitness_score(full_route)
+        current_distance = calc_fitness_score(distances, full_route)
         if current_distance < min_distance:
             min_distance = current_distance
             best_route = full_route
@@ -178,5 +179,8 @@ def brute_force():
 
 
 # Kick off the GA...
-ga()
-brute_force()
+number_locations = 6
+distances = Distances.load_matrix(number_locations)
+locations = list(Locations.locations)[:number_locations]
+ga(distances, locations)
+brute_force(distances, locations)
