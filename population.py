@@ -179,4 +179,4 @@ def brute_force():
 
 # Kick off the GA...
 ga()
-# brute_force()
+brute_force()
