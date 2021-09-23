@@ -12,7 +12,7 @@ import statistics
 import numpy as np
 
 
-POPULATION_SIZE = 25
+POPULATION_SIZE = 100
 MAX_GENERATIONS = 100
 NUMBER_OUTPUT_LINKS = 15
 ELITISM_PERCENT = 5
@@ -88,10 +88,6 @@ def create_population(size, locations):
 
 def ga(distance_matix, locations):
     logging.basicConfig(level=logging.INFO)
-    fittest_solution_all_time = Solution(locations)
-    fittest_solution_all_time.fitness_score = calc_fitness_score(
-        distance_matix, fittest_solution_all_time.route
-    )
     fittest_solution_per_generation = []
 
     with open("results/generation_results.csv", "w") as results:
@@ -103,37 +99,22 @@ def ga(distance_matix, locations):
     logging.info(f" Population size: {len(population)}")
 
     for generation_number in range(MAX_GENERATIONS):
-        #  Calculate the fitness of each solution
-        for solution in population:
-            solution.fitness_score = calc_fitness_score(distance_matix, solution.route)
-            logging.debug(f" Solution: {solution.fitness_score}")
-
+        calculate_population_fitness(distance_matix, population)
         current_fittest = min(population, key=lambda c: c.fitness_score)
         fittest_solution_per_generation.append(current_fittest)
-
-        if current_fittest.fitness_score < fittest_solution_all_time.fitness_score:
-            fittest_solution_all_time = copy.deepcopy(current_fittest)
 
         population = create_next_generation(population)
 
         output_generation_results(generation_number, population)
 
-    output_final_results(fittest_solution_all_time, fittest_solution_per_generation)
+    output_final_results(fittest_solution_per_generation)
 
 
-def output_generation_results(generation_number, population):
-    fitness_scores = (x.fitness_score for x in population)
-    fitness_array = np.array(list(fitness_scores))
-    mean_score = np.mean(fitness_array)
-    std_score = np.std(fitness_array)
-    longest = fitness_array.max()
-    shortest = fitness_array.min()
-
-    print(f"Generation {generation_number}, mean distance, {mean_score}")
-    with open("results/generation_results.csv", "a") as results:
-        results.write(
-            f"{generation_number}, {mean_score}, {std_score}, {longest}, {shortest}\n"
-        )
+def calculate_population_fitness(distance_matix, population):
+    #  Calculate the fitness of each solution
+    for solution in population:
+        solution.fitness_score = calc_fitness_score(distance_matix, solution.route)
+        logging.debug(f" Solution: {solution.fitness_score}")
 
 
 def create_next_generation(population):
@@ -156,10 +137,25 @@ def get_elites(population):
     return next_generation
 
 
-def output_final_results(solution, solutions):
+def output_generation_results(generation_number, population):
+    fitness_scores = (x.fitness_score for x in population)
+    fitness_array = np.array(list(fitness_scores))
+    mean_score = np.mean(fitness_array)
+    std_score = np.std(fitness_array)
+    longest = fitness_array.max()
+    shortest = fitness_array.min()
+
+    print(f"Generation {generation_number}, mean distance, {mean_score}")
+    with open("results/generation_results.csv", "a") as results:
+        results.write(
+            f"{generation_number}, {mean_score}, {std_score}, {longest}, {shortest}\n"
+        )
+
+
+def output_final_results(solutions):
     # [0, 7, 8, 6, 5, 4, 9, 3, 1, 2, 0]
 
-    print(f"Overall shortest route found: {solution.route} : {solution.fitness_score}")
+    # print(f"Overall shortest route found: {solution.route} : {solution.fitness_score}")
 
     routes = []
     counter = 0
