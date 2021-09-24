@@ -1,3 +1,4 @@
+import sys
 import copy
 import logging
 import random
@@ -11,11 +12,14 @@ import math
 import statistics
 import numpy as np
 
+import time
 
-POPULATION_SIZE = 100
-MAX_GENERATIONS = 100
-NUMBER_OUTPUT_LINKS = 15
-ELITISM_PERCENT = 5
+
+POPULATION_SIZE = 100000
+MAX_GENERATIONS = 400
+NUMBER_OUTPUT_LINKS = 10
+ELITISM_PERCENT = 2
+
 
 if NUMBER_OUTPUT_LINKS > MAX_GENERATIONS:
     OUTPUT_GENERATION_STEP = 1
@@ -169,8 +173,8 @@ def output_final_results(solutions):
     # For testing. This is the optimum route for 10 locations
     # [0, 7, 8, 6, 5, 4, 9, 3, 1, 2, 0]
     # Add to solutions to display it for convenience
-    optimum_solution = Solution([0, 7, 8, 6, 5, 4, 9, 3, 1, 2, 0])
-    optimum_solution.route = [0, 7, 8, 6, 5, 4, 9, 3, 1, 2, 0]
+    optimum_solution = Solution([0, 7, 8, 6, 5, 11, 10, 12, 4, 9, 3, 1, 2, 0])
+    optimum_solution.route = [0, 7, 8, 6, 5, 11, 10, 12, 4, 9, 3, 1, 2, 0]
     solutions.insert(0, optimum_solution)
 
     reporting.generate_report(solutions[::OUTPUT_GENERATION_STEP])
@@ -201,13 +205,30 @@ def brute_force(distances, locations):
         if current_distance < min_distance:
             min_distance = current_distance
             best_route = full_route
+            print(f"New best route: {best_route}")
 
     print(f"Minimum distance: {min_distance} - best route: {best_route}")
 
 
-# Kick off the GA...
-number_locations = 10
-distances = Distances.load_matrix(number_locations)
-locations = list(Locations.locations)[:number_locations]
-ga(distances, locations)
-brute_force(distances, locations)
+if __name__ == "__main__":
+    print(f"sys: {sys.argv}")
+    print(f"{len(sys.argv)}")
+
+    if len(sys.argv) < 2:
+        print(f"Usage is: python population.py <num_locations>")
+        exit()
+
+    number_locations = int(sys.argv[1])
+
+    # main(sys.argv[1:])
+
+    # Kick off the GA...
+    start_time = time.time()
+
+    distances = Distances.load_matrix(number_locations)
+    locations = list(Locations.locations)[:number_locations]
+    # ga(distances, locations)
+    brute_force(distances, locations)
+
+    end_time = time.time()
+    print(f"Elapsed time: {end_time-start_time}")
