@@ -206,7 +206,7 @@ def brute_force(distances, locations):
 
 
 # Kick off the GA...
-number_locations = 10
+number_locations = 12
 distances = Distances.load_matrix(number_locations)
 locations = list(Locations.locations)[:number_locations]
 ga(distances, locations)
