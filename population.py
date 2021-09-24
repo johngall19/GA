@@ -11,11 +11,15 @@ import math
 import statistics
 import numpy as np
 
+from datetime import datetime
 
-POPULATION_SIZE = 100
-MAX_GENERATIONS = 100
-NUMBER_OUTPUT_LINKS = 15
-ELITISM_PERCENT = 5
+
+POPULATION_SIZE = 100000
+MAX_GENERATIONS = 400
+NUMBER_OUTPUT_LINKS = 10
+ELITISM_PERCENT = 2
+number_locations = 12
+
 
 if NUMBER_OUTPUT_LINKS > MAX_GENERATIONS:
     OUTPUT_GENERATION_STEP = 1
@@ -169,8 +173,8 @@ def output_final_results(solutions):
     # For testing. This is the optimum route for 10 locations
     # [0, 7, 8, 6, 5, 4, 9, 3, 1, 2, 0]
     # Add to solutions to display it for convenience
-    optimum_solution = Solution([0, 7, 8, 6, 5, 4, 9, 3, 1, 2, 0])
-    optimum_solution.route = [0, 7, 8, 6, 5, 4, 9, 3, 1, 2, 0]
+    optimum_solution = Solution([0, 7, 8, 6, 5, 11, 10, 12, 4, 9, 3, 1, 2, 0])
+    optimum_solution.route = [0, 7, 8, 6, 5, 11, 10, 12, 4, 9, 3, 1, 2, 0]
     solutions.insert(0, optimum_solution)
 
     reporting.generate_report(solutions[::OUTPUT_GENERATION_STEP])
@@ -206,8 +210,10 @@ def brute_force(distances, locations):
 
 
 # Kick off the GA...
-number_locations = 12
+print(f">>>> Start: {datetime.now()}")
+
 distances = Distances.load_matrix(number_locations)
 locations = list(Locations.locations)[:number_locations]
-ga(distances, locations)
+# ga(distances, locations)
 brute_force(distances, locations)
+print(f">>>> End  : {datetime.now()}")

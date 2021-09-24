@@ -12,4 +12,3 @@ class Solution(object):
 
         # Always start and finish at location 0
         self.route = [0] + locations + [0]
-        print(f"Route: {self.route}")
