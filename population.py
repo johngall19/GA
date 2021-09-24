@@ -1,3 +1,4 @@
+import sys
 import copy
 import logging
 import random
@@ -11,14 +12,13 @@ import math
 import statistics
 import numpy as np
 
-from datetime import datetime
+import time
 
 
 POPULATION_SIZE = 100000
 MAX_GENERATIONS = 400
 NUMBER_OUTPUT_LINKS = 10
 ELITISM_PERCENT = 2
-number_locations = 12
 
 
 if NUMBER_OUTPUT_LINKS > MAX_GENERATIONS:
@@ -205,15 +205,30 @@ def brute_force(distances, locations):
         if current_distance < min_distance:
             min_distance = current_distance
             best_route = full_route
+            print(f"New best route: {best_route}")
 
     print(f"Minimum distance: {min_distance} - best route: {best_route}")
 
 
-# Kick off the GA...
-print(f">>>> Start: {datetime.now()}")
+if __name__ == "__main__":
+    print(f"sys: {sys.argv}")
+    print(f"{len(sys.argv)}")
 
-distances = Distances.load_matrix(number_locations)
-locations = list(Locations.locations)[:number_locations]
-# ga(distances, locations)
-brute_force(distances, locations)
-print(f">>>> End  : {datetime.now()}")
+    if len(sys.argv) < 2:
+        print(f"Usage is: python population.py <num_locations>")
+        exit()
+
+    number_locations = int(sys.argv[1])
+
+    # main(sys.argv[1:])
+
+    # Kick off the GA...
+    start_time = time.time()
+
+    distances = Distances.load_matrix(number_locations)
+    locations = list(Locations.locations)[:number_locations]
+    # ga(distances, locations)
+    brute_force(distances, locations)
+
+    end_time = time.time()
+    print(f"Elapsed time: {end_time-start_time}")
