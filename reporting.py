@@ -40,7 +40,7 @@ def generate_report(solutions):
     # build HTML page with links to all the routes (URL to maps)
     # list of embedded links to route maps.
     links = ""
-    counter = 0
+    counter = 1
     for solution in solutions:
         links += LINK.format(build_url(solution.route), counter, solution.fitness_score)
         counter += 1
