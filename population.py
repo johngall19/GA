@@ -15,8 +15,8 @@ import numpy as np
 import time
 
 
-POPULATION_SIZE = 100000
-MAX_GENERATIONS = 400
+POPULATION_SIZE = 10
+MAX_GENERATIONS = 4
 NUMBER_OUTPUT_LINKS = 10
 ELITISM_PERCENT = 2
 
@@ -173,9 +173,11 @@ def output_final_results(solutions):
     # For testing. This is the optimum route for 10 locations
     # [0, 7, 8, 6, 5, 4, 9, 3, 1, 2, 0]
     # Add to solutions to display it for convenience
-    optimum_solution = Solution([0, 7, 8, 6, 5, 11, 10, 12, 4, 9, 3, 1, 2, 0])
-    optimum_solution.route = [0, 7, 8, 6, 5, 11, 10, 12, 4, 9, 3, 1, 2, 0]
-    solutions.insert(0, optimum_solution)
+    # optimum_solution = Solution([0, 7, 8, 6, 5, 11, 10, 12, 4, 9, 3, 1, 2, 0])
+    # optimum_solution.route = [0, 7, 8, 6, 5, 11, 10, 12, 4, 9, 3, 1, 2, 0]
+    # solutions.insert(0, optimum_solution)
+
+    print(f">>>> generating report")
 
     reporting.generate_report(solutions[::OUTPUT_GENERATION_STEP])
 
@@ -227,8 +229,9 @@ if __name__ == "__main__":
 
     distances = Distances.load_matrix(number_locations)
     locations = list(Locations.locations)[:number_locations]
-    # ga(distances, locations)
-    brute_force(distances, locations)
+
+    ga(distances, locations)
+    # brute_force(distances, locations)
 
     end_time = time.time()
     print(f"Elapsed time: {end_time-start_time}")
