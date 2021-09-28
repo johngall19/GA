@@ -41,6 +41,6 @@ def mutate(child):
     if num == 0:
         mutation_swap(child.route)
     elif num == 1:
-        mutated_invert(child.route)
+        mutation_invert(child.route)
     elif num == 2:
         mutation_scramble(child.route)
