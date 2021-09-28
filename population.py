@@ -10,14 +10,17 @@ import mutations
 from solution import Solution
 from itertools import permutations
 import math
-import statistics
 import numpy as np
 
 import time
 
 
 POPULATION_SIZE = 10000
+<<<<<<< HEAD
 MAX_GENERATIONS = 20
+=======
+MAX_GENERATIONS = 500
+>>>>>>> ac40e81316102d37a0ef0ecb0c08a1fa1e907549
 NUMBER_OUTPUT_LINKS = 10
 ELITISM_PERCENT = 2
 MUTATION_PERCENT = 10
@@ -152,7 +155,9 @@ def output_generation_results(generation_number, population, current_fittest):
     longest = fitness_array.max()
     shortest = fitness_array.min()
 
-    print(f"Generation {generation_number}, mean distance, {mean_score}")
+    print(
+        f"Generation: {generation_number}, mean distance: {mean_score}, best distance: {shortest}"
+    )
     with open("results/generation_results.csv", "a") as results:
         results.write(
             f"{generation_number}\t{mean_score}\t{std_score}\t{longest}\t{shortest}\t{current_fittest.route}\n"
@@ -173,8 +178,9 @@ def output_final_results(solutions):
         routes.append(sol.route)
         counter += 1
 
-    # For testing. This is the optimum route for 10 locations
-    # [0, 7, 8, 6, 5, 4, 9, 3, 1, 2, 0]
+    # For testing. This is the optimum route for 14 locations
+    # [0, 7, 8, 6, 5, 11, 10, 12, 13, 4, 9, 3, 1, 2, 0]
+    # Elapsed time: 328069 seconds (3.8 days)
     # Add to solutions to display it for convenience
     # optimum_solution = Solution([0, 7, 8, 6, 5, 11, 10, 12, 4, 9, 3, 1, 2, 0])
     # optimum_solution.route = [0, 7, 8, 6, 5, 11, 10, 12, 4, 9, 3, 1, 2, 0]
