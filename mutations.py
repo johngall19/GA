@@ -39,7 +39,6 @@ def mutate(child, percentage):
     chance = random.randint(0, 100)
     if chance <= percentage:
         variant = random.randint(0, 2)
-        print("mutating")
         if variant == 0:
             mutation_swap(child.route)
         elif variant == 1:
