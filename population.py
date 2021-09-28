@@ -2,6 +2,7 @@ import sys
 import copy
 import logging
 import random
+from types import GeneratorType
 from locations import Locations
 from distances import Distances
 import reporting
@@ -16,11 +17,7 @@ import time
 
 
 POPULATION_SIZE = 10000
-<<<<<<< HEAD
-MAX_GENERATIONS = 20
-=======
-MAX_GENERATIONS = 500
->>>>>>> ac40e81316102d37a0ef0ecb0c08a1fa1e907549
+MAX_GENERATIONS = 5000
 NUMBER_OUTPUT_LINKS = 10
 ELITISM_PERCENT = 2
 MUTATION_PERCENT = 10
@@ -105,6 +102,7 @@ def ga(distance_matix, locations):
 
     population = create_population(POPULATION_SIZE, locations)
     logging.info(f" Population size: {len(population)}")
+    generation_report = ""
 
     try:
         for generation_number in range(MAX_GENERATIONS):
@@ -114,11 +112,82 @@ def ga(distance_matix, locations):
 
             population = create_next_generation(population)
 
-            output_generation_results(generation_number, population, current_fittest)
+            generation_report = output_generation_results(
+                generation_report, generation_number, population, current_fittest
+            )
     except KeyboardInterrupt:
         pass
 
-    output_final_results(fittest_solution_per_generation)
+    add_optimum_solution(fittest_solution_per_generation, distance_matix)
+
+    output_final_results(fittest_solution_per_generation, generation_report)
+
+
+def add_optimum_solution(solutions, distance_matrix):
+    # For testing. This is the optimum route for 14 locations
+    # [0, 7, 8, 6, 5, 11, 10, 12, 13, 4, 9, 3, 1, 2, 0]
+    # Elapsed time: 328069 seconds (3.8 days)
+    #
+    # Current best for 48 locations
+    # [0, 21, 15, 40, 33, 13, 24, 47, 4, 28, 1, 25, 3, 34, 44, 9, 41, 23, 31, 38, 12, 20, 46, 10, 22, 2, 39, 14, 45, 32, 11, 19, 29, 42, 16, 26, 18, 36, 5, 27, 35, 6, 17, 43, 30, 37, 8, 7, 0]
+    #
+    # Add to solutions to display it for convenience
+    optimum_solution = Solution([0, 7, 8, 6, 5, 11, 10, 12, 4, 9, 3, 1, 2, 0])
+    optimum_solution.route = [
+        0,
+        21,
+        15,
+        40,
+        33,
+        13,
+        24,
+        47,
+        4,
+        28,
+        1,
+        25,
+        3,
+        34,
+        44,
+        9,
+        41,
+        23,
+        31,
+        38,
+        12,
+        20,
+        46,
+        10,
+        22,
+        2,
+        39,
+        14,
+        45,
+        32,
+        11,
+        19,
+        29,
+        42,
+        16,
+        26,
+        18,
+        36,
+        5,
+        27,
+        35,
+        6,
+        17,
+        43,
+        30,
+        37,
+        8,
+        7,
+        0,
+    ]
+    optimum_solution.fitness_score = calc_fitness_score(
+        distance_matrix, optimum_solution.route
+    )
+    solutions.insert(0, optimum_solution)
 
 
 def calculate_population_fitness(distance_matix, population):
@@ -150,7 +219,9 @@ def get_elites(population):
     return next_generation
 
 
-def output_generation_results(generation_number, population, current_fittest):
+def output_generation_results(
+    generation_report, generation_number, population, current_fittest
+):
     fitness_scores = (x.fitness_score for x in population)
     fitness_array = np.array(list(fitness_scores))
     mean_score = np.mean(fitness_array)
@@ -158,19 +229,21 @@ def output_generation_results(generation_number, population, current_fittest):
     longest = fitness_array.max()
     shortest = fitness_array.min()
 
-    print(
-        f"Generation: {generation_number}, mean distance: {mean_score}, best distance: {shortest}"
-    )
+    generation_report += f"{generation_number}\t{mean_score}\t{std_score}\t{longest}\t{shortest}\t{current_fittest.route}\n"
+
+    # print(
+    #     f"Generation: {generation_number}, mean distance: {mean_score}, best distance: {shortest}"
+    # )
+    # with open("results/generation_results.csv", "a") as results:
+    #     results.write(
+    #         f"{generation_number}\t{mean_score}\t{std_score}\t{longest}\t{shortest}\t{current_fittest.route}\n"
+    #     )
+    return generation_report
+
+
+def output_final_results(solutions, generation_report):
     with open("results/generation_results.csv", "a") as results:
-        results.write(
-            f"{generation_number}\t{mean_score}\t{std_score}\t{longest}\t{shortest}\t{current_fittest.route}\n"
-        )
-
-
-def output_final_results(solutions):
-    # [0, 7, 8, 6, 5, 4, 9, 3, 1, 2, 0]
-
-    # print(f"Overall shortest route found: {solution.route} : {solution.fitness_score}")
+        results.write(generation_report)
 
     routes = []
     counter = 0
@@ -180,18 +253,6 @@ def output_final_results(solutions):
         )
         routes.append(sol.route)
         counter += 1
-
-    # For testing. This is the optimum route for 14 locations
-    # [0, 7, 8, 6, 5, 11, 10, 12, 13, 4, 9, 3, 1, 2, 0]
-    # Elapsed time: 328069 seconds (3.8 days)
-    #
-    # Current best for 48 locations
-    # [0, 21, 15, 40, 33, 13, 24, 47, 4, 28, 1, 25, 3, 34, 44, 9, 41, 23, 31, 38, 12, 20, 46, 10, 22, 2, 39, 14, 45, 32, 11, 19, 29, 42, 16, 26, 18, 36, 5, 27, 35, 6, 17, 43, 30, 37, 8, 7, 0]
-    #
-    # Add to solutions to display it for convenience
-    optimum_solution = Solution([0, 7, 8, 6, 5, 11, 10, 12, 4, 9, 3, 1, 2, 0])
-    optimum_solution.route = [0, 7, 8, 6, 5, 11, 10, 12, 4, 9, 3, 1, 2, 0]
-    solutions.insert(0, optimum_solution)
 
     print(f">>>> generating report")
 
