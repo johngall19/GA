@@ -5,6 +5,7 @@ import random
 from locations import Locations
 from distances import Distances
 import reporting
+import mutations
 
 from solution import Solution
 from itertools import permutations
@@ -15,10 +16,11 @@ import numpy as np
 import time
 
 
-POPULATION_SIZE = 10
-MAX_GENERATIONS = 4
+POPULATION_SIZE = 10000
+MAX_GENERATIONS = 25000
 NUMBER_OUTPUT_LINKS = 10
-ELITISM_PERCENT = 2
+ELITISM_PERCENT = 3
+MUTANT_PERCENT = 10
 
 
 if NUMBER_OUTPUT_LINKS > MAX_GENERATIONS:
@@ -57,6 +59,12 @@ def breed(parent_one, parent_two):
     # print(f"child_one: {child1.route}")
     # print(f"child_two: {child2.route}")
     return child_one, child_two
+
+    # def mutate_population(parent_one, parent_two):
+    #     mutant_one = copy.deepcopy(parent_one)
+    #     mutant_two = copy.deepcopy(parent_two)
+
+    #     num_genes = len(parent_one.route)
 
 
 def swap(values, first_value, second_value):
@@ -111,7 +119,7 @@ def ga(distance_matix, locations):
 
         output_generation_results(generation_number, population)
 
-    output_final_results(fittest_solution_per_generation)
+    # output_final_results(fittest_solution_per_generation)
 
 
 def calculate_population_fitness(distance_matix, population):
@@ -123,11 +131,12 @@ def calculate_population_fitness(distance_matix, population):
 
 def create_next_generation(population):
     next_generation = get_elites(population)
-
     remaining_number = POPULATION_SIZE - len(next_generation)
     for _ in range(remaining_number // 2):
         parent1, parent2 = select_parents(population)
         child1, child2 = breed(parent1, parent2)
+        mutations.mutate(child1)
+        mutations.mutate(child2)
         next_generation.append(child1)
         next_generation.append(child2)
     return next_generation
@@ -213,13 +222,13 @@ def brute_force(distances, locations):
 
 
 if __name__ == "__main__":
+
     print(f"sys: {sys.argv}")
     print(f"{len(sys.argv)}")
 
     if len(sys.argv) < 2:
         print(f"Usage is: python population.py <num_locations>")
         exit()
-
     number_locations = int(sys.argv[1])
 
     # main(sys.argv[1:])
