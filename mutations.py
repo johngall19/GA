@@ -35,12 +35,14 @@ def mutation_invert(child):
     return child
 
 
-def mutate(child):
-    num = random.randint(0, 25)
-
-    if num == 0:
-        mutation_swap(child.route)
-    elif num == 1:
-        mutation_invert(child.route)
-    elif num == 2:
-        mutation_scramble(child.route)
+def mutate(child, percentage):
+    chance = random.randint(0, 100)
+    if chance <= percentage:
+        variant = random.randint(0, 2)
+        print("mutating")
+        if variant == 0:
+            mutation_swap(child.route)
+        elif variant == 1:
+            mutation_invert(child.route)
+        elif variant == 2:
+            mutation_scramble(child.route)
