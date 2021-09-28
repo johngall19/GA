@@ -5,6 +5,7 @@ import random
 from locations import Locations
 from distances import Distances
 import reporting
+import mutations
 
 from solution import Solution
 from itertools import permutations
@@ -128,6 +129,8 @@ def create_next_generation(population):
     for _ in range(remaining_number // 2):
         parent1, parent2 = select_parents(population)
         child1, child2 = breed(parent1, parent2)
+        mutations.mutate(child1)
+        mutations.mutate(child2)
         next_generation.append(child1)
         next_generation.append(child2)
     return next_generation
