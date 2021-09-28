@@ -97,7 +97,7 @@ def ga(distance_matix, locations):
 
     with open("results/generation_results.csv", "w") as results:
         results.write(
-            "Generation, Average Distance, Standard Deviation, Longest, Shortest\n"
+            "Generation\tAverage Distance\tStandard Deviation\tLongest\tShortest\tRoute\n"
         )
 
     population = create_population(POPULATION_SIZE, locations)
@@ -110,7 +110,7 @@ def ga(distance_matix, locations):
 
         population = create_next_generation(population)
 
-        output_generation_results(generation_number, population)
+        output_generation_results(generation_number, population, current_fittest)
 
     output_final_results(fittest_solution_per_generation)
 
@@ -144,7 +144,7 @@ def get_elites(population):
     return next_generation
 
 
-def output_generation_results(generation_number, population):
+def output_generation_results(generation_number, population, current_fittest):
     fitness_scores = (x.fitness_score for x in population)
     fitness_array = np.array(list(fitness_scores))
     mean_score = np.mean(fitness_array)
@@ -155,7 +155,7 @@ def output_generation_results(generation_number, population):
     print(f"Generation {generation_number}, mean distance, {mean_score}")
     with open("results/generation_results.csv", "a") as results:
         results.write(
-            f"{generation_number}, {mean_score}, {std_score}, {longest}, {shortest}\n"
+            f"{generation_number}\t{mean_score}\t{std_score}\t{longest}\t{shortest}\t{current_fittest.route}\n"
         )
 
 
