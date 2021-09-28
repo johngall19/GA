@@ -16,10 +16,14 @@ import time
 
 
 POPULATION_SIZE = 10000
+<<<<<<< HEAD
+MAX_GENERATIONS = 20
+=======
 MAX_GENERATIONS = 500
+>>>>>>> ac40e81316102d37a0ef0ecb0c08a1fa1e907549
 NUMBER_OUTPUT_LINKS = 10
 ELITISM_PERCENT = 2
-
+MUTATION_PERCENT = 10
 
 if NUMBER_OUTPUT_LINKS > MAX_GENERATIONS:
     OUTPUT_GENERATION_STEP = 1
@@ -131,8 +135,8 @@ def create_next_generation(population):
     for _ in range(remaining_number // 2):
         parent1, parent2 = select_parents(population)
         child1, child2 = breed(parent1, parent2)
-        mutations.mutate(child1)
-        mutations.mutate(child2)
+        mutations.mutate(child1, MUTATION_PERCENT)
+        mutations.mutate(child2, MUTATION_PERCENT)
         next_generation.append(child1)
         next_generation.append(child2)
     return next_generation
