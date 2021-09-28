@@ -102,14 +102,17 @@ def ga(distance_matix, locations):
     population = create_population(POPULATION_SIZE, locations)
     logging.info(f" Population size: {len(population)}")
 
-    for generation_number in range(MAX_GENERATIONS):
-        calculate_population_fitness(distance_matix, population)
-        current_fittest = min(population, key=lambda c: c.fitness_score)
-        fittest_solution_per_generation.append(current_fittest)
+    try:
+        for generation_number in range(MAX_GENERATIONS):
+            calculate_population_fitness(distance_matix, population)
+            current_fittest = min(population, key=lambda c: c.fitness_score)
+            fittest_solution_per_generation.append(current_fittest)
 
-        population = create_next_generation(population)
+            population = create_next_generation(population)
 
-        output_generation_results(generation_number, population, current_fittest)
+            output_generation_results(generation_number, population, current_fittest)
+    except KeyboardInterrupt:
+        pass
 
     output_final_results(fittest_solution_per_generation)
 
@@ -177,10 +180,14 @@ def output_final_results(solutions):
     # For testing. This is the optimum route for 14 locations
     # [0, 7, 8, 6, 5, 11, 10, 12, 13, 4, 9, 3, 1, 2, 0]
     # Elapsed time: 328069 seconds (3.8 days)
+    #
+    # Current best for 48 locations
+    # [0, 21, 15, 40, 33, 13, 24, 47, 4, 28, 1, 25, 3, 34, 44, 9, 41, 23, 31, 38, 12, 20, 46, 10, 22, 2, 39, 14, 45, 32, 11, 19, 29, 42, 16, 26, 18, 36, 5, 27, 35, 6, 17, 43, 30, 37, 8, 7, 0]
+    #
     # Add to solutions to display it for convenience
-    # optimum_solution = Solution([0, 7, 8, 6, 5, 11, 10, 12, 4, 9, 3, 1, 2, 0])
-    # optimum_solution.route = [0, 7, 8, 6, 5, 11, 10, 12, 4, 9, 3, 1, 2, 0]
-    # solutions.insert(0, optimum_solution)
+    optimum_solution = Solution([0, 7, 8, 6, 5, 11, 10, 12, 4, 9, 3, 1, 2, 0])
+    optimum_solution.route = [0, 7, 8, 6, 5, 11, 10, 12, 4, 9, 3, 1, 2, 0]
+    solutions.insert(0, optimum_solution)
 
     print(f">>>> generating report")
 
