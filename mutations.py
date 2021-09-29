@@ -52,11 +52,13 @@ def mutate(child, percentage):
     if chance <= percentage:
         variant = random.randint(0, 20)
         if variant == 0:
-            child = mutation_swap(child.route)
+            child.route = mutation_swap(child.route)
         elif variant == 1:
-            child = mutation_invert(child.route)
+            child.route = mutation_invert(child.route)
         elif variant <= 20:
-            child = mutation_scramble2(child.route)
+            child.route = mutation_scramble2(child.route)
+
+    return child
 
 
 print(child)
