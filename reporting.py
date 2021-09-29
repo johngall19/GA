@@ -189,7 +189,7 @@ def generate_report(solutions):
         # Chunk the route up in to parts if required.
         chunks = [
             solution.route[x : x + MAX_LOCATIONS_PER_MAP + 1]
-            for x in range(0, len(solution.route), MAX_LOCATIONS_PER_MAP)
+            for x in range(0, len(solution.route), MAX_LOCATIONS_PER_MAP + 1)
         ]
 
         for chunk in chunks:

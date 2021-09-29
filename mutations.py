@@ -1,6 +1,47 @@
 import random
 
-child = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0]
+child = [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    0,
+]
+
+
+def mutation_mass_swap(child):
+    odds = []
+    evens = []
+    mutant = []
+    for gene in range(len(child)):
+        if gene > 0 and gene < len(child) - 1:
+            if child[gene] % 2 == 0:
+                evens.append(child[gene])
+            else:
+                odds.append(child[gene])
+    mutant.append(0)
+
+    for gene in range(len(odds)):
+        try:
+            mutant.append(evens[gene])
+        except:
+            pass
+        try:
+            mutant.append(odds[gene])
+        finally:
+            pass
+    mutant.append(0)
+    return mutant
+
+
+print(child)
+print(mutation_mass_swap(child))
 
 
 def mutation_swap(child):
@@ -61,7 +102,9 @@ def mutate(child, percentage):
             child.route = mutation_swap(child.route)
         elif variant == 1:
             child.route = mutation_invert(child.route)
-        elif variant <= 10:
+        elif variant <= 7:
+            child.route = mutation_mass_swap(child.route)
+        elif variant <= 13:
             child.route = mutation_nextdoor_swap(child.route)
         elif variant <= 20:
             child.route = mutation_scramble2(child.route)
@@ -69,7 +112,7 @@ def mutate(child, percentage):
     return child
 
 
-print(child)
-child = mutation_scramble2(child)
-# child = mutation_nextdoor_swap(child)
-print(child)
+# print(child)
+# child = mutation_scramble2(child)
+# # child = mutation_nextdoor_swap(child)
+# print(child)
