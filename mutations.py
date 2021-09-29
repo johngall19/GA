@@ -12,6 +12,13 @@ def mutation_swap(child):
     return child
 
 
+def mutation_nextdoor_swap(child):
+    gene1 = random.randint(1, len(child) - 2)
+    gene2 = gene1 + 1
+    child[gene1], child[gene2] = child[gene2], child[gene1]
+    return child
+
+
 def mutation_scramble(child):
     subset = []
     subsetSize = int(len(child) / 2)
@@ -26,7 +33,7 @@ def mutation_scramble(child):
 
 def mutation_scramble2(child):
     start_scramble = random.randint(1, len(child) - 1)
-    end_scramble = random.randint(start_scramble, len(child) - 1)
+    end_scramble = random.randint(start_scramble, len(child) - 1) + 1
     scrambled_part = child[start_scramble:end_scramble]
 
     random.shuffle(scrambled_part)
@@ -55,6 +62,8 @@ def mutate(child, percentage):
             child.route = mutation_swap(child.route)
         elif variant == 1:
             child.route = mutation_invert(child.route)
+        elif variant <= 10:
+            child.route = mutation_nextdoor_swap(child.route)
         elif variant <= 20:
             child.route = mutation_scramble2(child.route)
 
