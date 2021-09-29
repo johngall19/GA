@@ -13,7 +13,7 @@ def mutation_swap(child):
 
 
 def mutation_nextdoor_swap(child):
-    gene1 = random.randint(1, len(child) - 2)
+    gene1 = random.randint(1, len(child) - 3)
     gene2 = gene1 + 1
     child[gene1], child[gene2] = child[gene2], child[gene1]
     return child
@@ -32,14 +32,13 @@ def mutation_scramble(child):
 
 
 def mutation_scramble2(child):
-    start_scramble = random.randint(1, len(child) - 1)
-    end_scramble = random.randint(start_scramble, len(child) - 1) + 1
-    scrambled_part = child[start_scramble:end_scramble]
+    start_scramble = random.randint(1, len(child) - 3)
+    end_scramble = random.randint(start_scramble + 1, len(child) - 2)
+    scrambled_part = child[start_scramble : end_scramble + 1]
 
     random.shuffle(scrambled_part)
 
-    child = child[0:start_scramble] + scrambled_part + child[end_scramble:]
-
+    child = child[0:start_scramble] + scrambled_part + child[end_scramble + 1 :]
     return child
 
 
@@ -72,4 +71,5 @@ def mutate(child, percentage):
 
 print(child)
 child = mutation_scramble2(child)
+# child = mutation_nextdoor_swap(child)
 print(child)
