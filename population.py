@@ -20,7 +20,7 @@ POPULATION_SIZE = 10000
 MAX_GENERATIONS = 5000
 NUMBER_OUTPUT_LINKS = 10
 ELITISM_PERCENT = 2
-MUTATION_PERCENT = 10
+MUTATION_PERCENT = 20
 
 if NUMBER_OUTPUT_LINKS > MAX_GENERATIONS:
     OUTPUT_GENERATION_STEP = 1
@@ -102,7 +102,6 @@ def ga(distance_matix, locations):
 
     population = create_population(POPULATION_SIZE, locations)
     logging.info(f" Population size: {len(population)}")
-    generation_report = ""
 
     try:
         for generation_number in range(MAX_GENERATIONS):
@@ -112,15 +111,13 @@ def ga(distance_matix, locations):
 
             population = create_next_generation(population)
 
-            generation_report = output_generation_results(
-                generation_report, generation_number, population, current_fittest
-            )
+            output_generation_results(generation_number, population, current_fittest)
     except KeyboardInterrupt:
         pass
 
     add_optimum_solution(fittest_solution_per_generation, distance_matix)
 
-    output_final_results(fittest_solution_per_generation, generation_report)
+    output_final_results(fittest_solution_per_generation)
 
 
 def add_optimum_solution(solutions, distance_matrix):
@@ -129,8 +126,12 @@ def add_optimum_solution(solutions, distance_matrix):
     # Elapsed time: 328069 seconds (3.8 days)
     #
     # Current best for 48 locations
+    # 13130
     # [0, 21, 15, 40, 33, 13, 24, 47, 4, 28, 1, 25, 3, 34, 44, 9, 41, 23, 31, 38, 12, 20, 46, 10, 22, 2, 39, 14, 45, 32, 11, 19, 29, 42, 16, 26, 18, 36, 5, 27, 35, 6, 17, 43, 30, 37, 8, 7, 0]
     #
+    # 13207 milwa
+    # [0, 39, 14, 11, 10, 22, 12, 24, 13, 33, 2, 21, 15, 40, 28, 1, 25, 3, 34, 44, 23, 9, 41, 47, 4, 38, 31, 20, 46, 19, 32, 45, 35, 27, 5, 36, 18, 26, 16, 42, 29, 6, 17, 43, 30, 37, 8, 7, 0]
+
     # Add to solutions to display it for convenience
     optimum_solution = Solution([0, 7, 8, 6, 5, 11, 10, 12, 4, 9, 3, 1, 2, 0])
     optimum_solution.route = [
@@ -204,8 +205,8 @@ def create_next_generation(population):
     for _ in range(remaining_number // 2):
         parent1, parent2 = select_parents(population)
         child1, child2 = breed(parent1, parent2)
-        mutations.mutate(child1, MUTATION_PERCENT)
-        mutations.mutate(child2, MUTATION_PERCENT)
+        child1 = mutations.mutate(child1, MUTATION_PERCENT)
+        child2 = mutations.mutate(child2, MUTATION_PERCENT)
         next_generation.append(child1)
         next_generation.append(child2)
     return next_generation
@@ -219,9 +220,7 @@ def get_elites(population):
     return next_generation
 
 
-def output_generation_results(
-    generation_report, generation_number, population, current_fittest
-):
+def output_generation_results(generation_number, population, current_fittest):
     fitness_scores = (x.fitness_score for x in population)
     fitness_array = np.array(list(fitness_scores))
     mean_score = np.mean(fitness_array)
@@ -229,22 +228,16 @@ def output_generation_results(
     longest = fitness_array.max()
     shortest = fitness_array.min()
 
-    generation_report += f"{generation_number}\t{mean_score}\t{std_score}\t{longest}\t{shortest}\t{current_fittest.route}\n"
-
-    # print(
-    #     f"Generation: {generation_number}, mean distance: {mean_score}, best distance: {shortest}"
-    # )
-    # with open("results/generation_results.csv", "a") as results:
-    #     results.write(
-    #         f"{generation_number}\t{mean_score}\t{std_score}\t{longest}\t{shortest}\t{current_fittest.route}\n"
-    #     )
-    return generation_report
-
-
-def output_final_results(solutions, generation_report):
+    print(
+        f"Generation: {generation_number}, mean distance: {mean_score}, best distance: {shortest}"
+    )
     with open("results/generation_results.csv", "a") as results:
-        results.write(generation_report)
+        results.write(
+            f"{generation_number}\t{mean_score}\t{std_score}\t{longest}\t{shortest}\t{current_fittest.route}\n"
+        )
 
+
+def output_final_results(solutions):
     routes = []
     counter = 0
     for sol in solutions[::OUTPUT_GENERATION_STEP]:
