@@ -16,8 +16,8 @@ import numpy as np
 import time
 
 
-POPULATION_SIZE = 10000
-MAX_GENERATIONS = 5000
+POPULATION_SIZE = 1000
+MAX_GENERATIONS = 1000
 NUMBER_OUTPUT_LINKS = 10
 ELITISM_PERCENT = 2
 MUTATION_PERCENT = 20
@@ -29,10 +29,6 @@ else:
 
 
 def breed(parent_one, parent_two):
-    # print("######### breed")
-    # print(f"parent_one: {parent_one.route}")
-    # print(f"parent_two: {parent_two.route}")
-
     child_one = copy.deepcopy(parent_one)
     child_two = copy.deepcopy(parent_two)
 
@@ -42,11 +38,6 @@ def breed(parent_one, parent_two):
     cross_over_start = random.randint(0, num_genes - 2)
     cross_over_end = random.randint(cross_over_start + 1, num_genes - 1)
 
-    # print(f"num_genes:       {num_genes}")
-    # print(f"cross_over_start:      {cross_over_start}")
-    # print(f"remaining_genes: {remaining_genes}")
-    # print(f"cross_over_end:  {cross_over_end}")
-
     for i in range(cross_over_start, cross_over_end + 1):
         first_location = child_one.route[i]
         second_location = child_two.route[i]
@@ -55,8 +46,6 @@ def breed(parent_one, parent_two):
         swap(child_one.route, first_location, second_location)
         swap(child_two.route, first_location, second_location)
 
-    # print(f"child_one: {child1.route}")
-    # print(f"child_two: {child2.route}")
     return child_one, child_two
 
 
@@ -122,10 +111,17 @@ def ga(distance_matix, locations):
 
 def add_optimum_solution(solutions, distance_matrix):
     # For testing. This is the optimum route for 14 locations
+    #  7641 miles
     # [0, 7, 8, 6, 5, 11, 10, 12, 13, 4, 9, 3, 1, 2, 0]
     # Elapsed time: 328069 seconds (3.8 days)
+    # Best route for 10
+    # [0, 7, 8, 6, 5, 4, 9, 3, 1, 2, 0]
+    #  Best for 24
+    #  [0, 7, 8, 14, 17, 6, 5, 18, 16, 19, 11, 10, 22, 12, 20, 23, 9, 3, 1, 4, 13, 2, 15, 21, 0]
     #
     # Current best for 48 locations
+    # 13112:
+    # [0, 21, 15, 40, 33, 2, 39, 14, 45, 32, 11, 10, 22, 13, 24, 47, 4, 28, 1, 25, 3, 34, 44, 9, 41, 23, 31, 38, 12, 20, 46, 19, 29, 42, 16, 26, 18, 36, 5, 27, 35, 6, 17, 43, 30, 37, 8, 7, 0]
     # 13130
     # [0, 21, 15, 40, 33, 13, 24, 47, 4, 28, 1, 25, 3, 34, 44, 9, 41, 23, 31, 38, 12, 20, 46, 10, 22, 2, 39, 14, 45, 32, 11, 19, 29, 42, 16, 26, 18, 36, 5, 27, 35, 6, 17, 43, 30, 37, 8, 7, 0]
     #
@@ -133,58 +129,35 @@ def add_optimum_solution(solutions, distance_matrix):
     # [0, 39, 14, 11, 10, 22, 12, 24, 13, 33, 2, 21, 15, 40, 28, 1, 25, 3, 34, 44, 23, 9, 41, 47, 4, 38, 31, 20, 46, 19, 32, 45, 35, 27, 5, 36, 18, 26, 16, 42, 29, 6, 17, 43, 30, 37, 8, 7, 0]
 
     # Add to solutions to display it for convenience
-    optimum_solution = Solution([0, 7, 8, 6, 5, 11, 10, 12, 4, 9, 3, 1, 2, 0])
+    optimum_solution = Solution([0, 7, 8, 6, 5, 11, 10, 12, 13, 4, 9, 3, 1, 2, 0])
     optimum_solution.route = [
         0,
-        21,
-        15,
-        40,
-        33,
-        13,
-        24,
-        47,
-        4,
-        28,
-        1,
-        25,
-        3,
-        34,
-        44,
-        9,
-        41,
-        23,
-        31,
-        38,
+        7,
+        8,
+        17,
+        6,
+        5,
+        18,
+        16,
+        19,
+        14,
+        11,
+        10,
         12,
         20,
-        46,
-        10,
+        23,
+        9,
+        3,
+        1,
+        4,
+        13,
         22,
         2,
-        39,
-        14,
-        45,
-        32,
-        11,
-        19,
-        29,
-        42,
-        16,
-        26,
-        18,
-        36,
-        5,
-        27,
-        35,
-        6,
-        17,
-        43,
-        30,
-        37,
-        8,
-        7,
+        15,
+        21,
         0,
     ]
+
     optimum_solution.fitness_score = calc_fitness_score(
         distance_matrix, optimum_solution.route
     )
